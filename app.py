@@ -376,7 +376,7 @@ with tab1:
                     badge_class = "badge-green" if is_discount else "badge-red"
                     badge_text = f"▲ {upside:.1f}% DESCONTO" if is_discount else f"▼ {abs(upside):.1f}% SOBREPREÇO"
 
-                    hero_html = f"""
+                    hero_header_html = f"""
                     <div class="hero-card">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
                             <div>
@@ -394,9 +394,12 @@ with tab1:
                                 <div class="badge {badge_class}">{badge_text}</div>
                             </div>
                         </div>
+                    </div>
+                    """
+                    st.markdown(hero_header_html, unsafe_allow_html=True)
 
-                        <hr class="fp-divider">
-
+                    metrics_html = f"""
+                    <div style="background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0 0 16px 16px; padding: 20px 24px; margin-top: -18px; margin-bottom: 16px;">
                         <div class="metric-row">
                             <div class="metric-item">
                                 <div class="metric-label">LPA (EPS)</div>
@@ -417,7 +420,7 @@ with tab1:
                         </div>
                     </div>
                     """
-                    st.markdown(hero_html, unsafe_allow_html=True)
+                    st.markdown(metrics_html, unsafe_allow_html=True)
 
                     # ── Reasoning Expander ──
                     with st.expander("📐 Raciocínio do Modelo (passo a passo)", expanded=False):
