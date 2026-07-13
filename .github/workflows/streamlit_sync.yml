@@ -1,0 +1,24 @@
+name: Streamlit Sync & Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Syntax check
+        run: |
+          python -m py_compile app.py
+          python -m py_compile src/data_provider.py
+          python -m py_compile src/valuation.py
