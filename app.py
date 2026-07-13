@@ -314,6 +314,15 @@ if use_custom_pe:
                                        value=12.0, step=0.5)
 
 st.sidebar.markdown("---")
+st.sidebar.markdown("### 🛡️ Filtros de Segurança Financeira")
+filter_high_debt = st.sidebar.toggle(
+    "Excluir Dívida Alta", value=True,
+    help="Exclui empresas com Dív.Líq/EBITDA > 3.5x (ou > 4.5x para Utilities). Bancos e seguradoras são isentos por não utilizarem EBITDA.")
+filter_low_coverage = st.sidebar.toggle(
+    "Excluir Solvência Tensa", value=True,
+    help="Exclui empresas cuja cobertura de juros (EBIT / Despesa de Juros) é menor que 1.5x (empresas incapazes de cobrir despesas financeiras com lucro operacional).")
+
+st.sidebar.markdown("---")
 st.sidebar.markdown(
     "<p style='font-size:0.75rem; color:#475569; text-align:center;'>"
     "FairPrice v1.0 — Ecossistema Antigravity<br>"
@@ -398,6 +407,9 @@ with tab1:
                     """
                     st.markdown(hero_header_html, unsafe_allow_html=True)
 
+                    interest_cov_val = val.get('interest_coverage', 999.0)
+                    interest_cov_display = f"{interest_cov_val:.1f}x" if interest_cov_val < 990 else "Isento"
+
                     metrics_html = f"""
                     <div style="background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0 0 16px 16px; padding: 20px 24px; margin-top: -18px; margin-bottom: 16px;">
                         <div class="metric-row">
@@ -416,6 +428,10 @@ with tab1:
                             <div class="metric-item">
                                 <div class="metric-label">Dív.Líq/EBITDA</div>
                                 <div class="metric-value">{val['net_debt_ebitda']:.1f}x</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Cobert. Juros</div>
+                                <div class="metric-value">{interest_cov_display}</div>
                             </div>
                         </div>
                     </div>
@@ -532,6 +548,23 @@ with tab2:
                         model_keys.append("Múltiplos")
                 filtered = [r for r in filtered if any(k in r['model_used'] for k in model_keys)]
 
+            # Financial safety filters
+            if filter_high_debt:
+                filtered_clean = []
+                for r in filtered:
+                    if r['sector'] == 'Financial Services':
+                        filtered_clean.append(r)
+                    elif r['sector'] == 'Utilities':
+                        if r['net_debt_ebitda'] <= 4.5:
+                            filtered_clean.append(r)
+                    else:
+                        if r['net_debt_ebitda'] <= 3.5:
+                            filtered_clean.append(r)
+                filtered = filtered_clean
+
+            if filter_low_coverage:
+                filtered = [r for r in filtered if r['interest_coverage'] >= 1.5]
+
             # Only positive upside
             filtered = [r for r in filtered if r.get('upside_pct', 0) > 0]
             filtered = filtered[:top_n]
@@ -581,6 +614,9 @@ with tab2:
 
                 for i, r in enumerate(filtered):
                     badge_html = (f'<span class="badge badge-green">▲ {r["upside_pct"]:.1f}%</span>')
+                    alav_desc = f" · Dív/EBITDA: {r['net_debt_ebitda']:.1f}x" if r['sector'] != 'Financial Services' else ""
+                    cov_val = r.get('interest_coverage', 999.0)
+                    cov_desc = f" · Cob.Juros: {cov_val:.1f}x" if cov_val < 990 else ""
 
                     st.markdown(f"""
                     <div class="rank-card">
@@ -588,7 +624,7 @@ with tab2:
                             <span class="rank-number">#{i+1}</span>
                             <div>
                                 <div class="rank-ticker">{r['ticker']}</div>
-                                <div class="rank-sector">{r['sector']} · {r['model_icon']} {r['model_used']}</div>
+                                <div class="rank-sector">{r['sector']} · {r['model_icon']} {r['model_used']}{alav_desc}{cov_desc}</div>
                             </div>
                         </div>
                         <div class="rank-prices">
@@ -612,7 +648,8 @@ with tab2:
                         'LPA': r['eps'],
                         'Div.Yield (%)': r['div_yield'],
                         'FCF/Ação': r['fcf_per_share'],
-                        'Dív.Líq/EBITDA': r['net_debt_ebitda'],
+                        'Dív.Líq/EBITDA': r['net_debt_ebitda'] if r['sector'] != 'Financial Services' else np.nan,
+                        'Cobertura Juros': r['interest_coverage'] if r['interest_coverage'] < 990 else np.nan,
                     } for r in filtered])
                     st.dataframe(df_export, use_container_width=True, hide_index=True)
 

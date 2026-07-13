@@ -277,6 +277,7 @@ class ValuationEngine:
         fcf_growth = stock_data.get('fcf_growth', 0.05)
         historical_pe = stock_data.get('historical_pe', 0)
         net_debt_ebitda = stock_data.get('net_debt_ebitda', 0)
+        interest_coverage = stock_data.get('interest_coverage', 999.0)
 
         # Classify model
         model = classify_model(sector, div_yield, eps, fcf_per_share)
@@ -339,6 +340,7 @@ class ValuationEngine:
             'div_yield': div_yield,
             'fcf_per_share': fcf_per_share,
             'net_debt_ebitda': net_debt_ebitda,
+            'interest_coverage': interest_coverage,
             'valid': result.get('valid', False),
         }
 
@@ -376,5 +378,6 @@ class ValuationEngine:
             'div_yield': 0,
             'fcf_per_share': 0,
             'net_debt_ebitda': 0,
+            'interest_coverage': 999.0,
             'valid': False,
         }

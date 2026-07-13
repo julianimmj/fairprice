@@ -337,6 +337,18 @@ def get_stock_data(ticker_code: str) -> dict | None:
             except Exception:
                 pass
 
+            # ── Interest Coverage Ratio ──
+            interest_coverage = 999.0
+            try:
+                inc = tk.income_stmt
+                if inc is not None and not inc.empty:
+                    ebit = _first_found(inc, 'EBIT', 'Operating Income')
+                    interest_expense = _first_found(inc, 'Interest Expense', 'Interest Expense Net Non Operating')
+                    if interest_expense != 0:
+                        interest_coverage = ebit / abs(interest_expense)
+            except Exception:
+                pass
+
             # ── Dividend Yield ──
             div_yield = (dpy / current_price * 100) if current_price > 0 and dpy > 0 else 0.0
 
@@ -357,6 +369,7 @@ def get_stock_data(ticker_code: str) -> dict | None:
                 'fcf_per_share': round(fcf_per_share, 4),
                 'fcf_growth': round(fcf_growth, 4),
                 'net_debt_ebitda': round(net_debt_ebitda, 2),
+                'interest_coverage': round(interest_coverage, 2),
             }
 
         except Exception:
