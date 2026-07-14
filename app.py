@@ -275,6 +275,23 @@ html, body, [class*="css"] {
     padding: 10px 24px;
     font-weight: 600;
 }
+
+/* ── Primary Button Override ── */
+div.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #00B0FF 0%, #7C4DFF 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 15px rgba(124, 77, 255, 0.25) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+}
+div.stButton > button[kind="primary"]:hover {
+    background: linear-gradient(135deg, #00E676 0%, #00B0FF 100%) !important;
+    box-shadow: 0 4px 20px rgba(0, 230, 118, 0.3) !important;
+    border-color: rgba(0, 230, 118, 0.5) !important;
+    transform: translateY(-1px) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -619,19 +636,21 @@ with tab2:
                     cov_desc = f" · Cob.Juros: {cov_val:.1f}x" if cov_val < 990 else ""
 
                     st.markdown(f"""
-                    <div class="rank-card">
-                        <div style="display: flex; align-items: center;">
-                            <span class="rank-number">#{i+1}</span>
+                    <div class="rank-card" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div style="width: 55%; display: flex; align-items: center; justify-content: flex-start; text-align: left;">
+                            <span class="rank-number" style="min-width: 48px; display: inline-block;">#{i+1}</span>
                             <div>
                                 <div class="rank-ticker">{r['ticker']}</div>
                                 <div class="rank-sector">{r['sector']} · {r['model_icon']} {r['model_used']}{alav_desc}{cov_desc}</div>
                             </div>
                         </div>
-                        <div class="rank-prices">
+                        <div class="rank-prices" style="width: 25%; text-align: right; padding-right: 24px;">
                             <div class="rank-fair-val">R$ {r['fair_value']:.2f}</div>
                             <div class="rank-curr-val">Atual: R$ {r['current_price']:.2f}</div>
                         </div>
-                        <div>{badge_html}</div>
+                        <div style="width: 20%; text-align: right; display: flex; justify-content: flex-end;">
+                            {badge_html}
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
 
