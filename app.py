@@ -292,6 +292,25 @@ div.stButton > button[kind="primary"]:hover {
     border-color: rgba(0, 230, 118, 0.5) !important;
     transform: translateY(-1px) !important;
 }
+
+/* ── Multiselect Tags Override ── */
+span[data-baseweb="tag"] {
+    background-color: #1e293b !important;
+    color: #00B0FF !important;
+    border: 1px solid rgba(0, 176, 255, 0.2) !important;
+    border-radius: 6px !important;
+    padding-left: 8px !important;
+}
+span[data-baseweb="tag"] span {
+    color: #00B0FF !important;
+}
+span[data-baseweb="tag"] button {
+    color: #00B0FF !important;
+}
+span[data-baseweb="tag"] button:hover {
+    color: #FF1744 !important;
+    background-color: transparent !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -628,6 +647,15 @@ with tab2:
                 # ── Full Ranking ──
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown(f"##### 📋 Ranking Completo — TOP {len(filtered)} Ações Descontadas")
+
+                # Table Header
+                st.markdown("""
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px 6px 20px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div style="width: 55%; font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Ativo / Setor / Modelo / Indicadores</div>
+                    <div style="width: 25%; text-align: right; font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px; padding-right: 24px;">Preço Justo (Atual)</div>
+                    <div style="width: 20%; text-align: right; font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Upside / Desconto</div>
+                </div>
+                """, unsafe_allow_html=True)
 
                 for i, r in enumerate(filtered):
                     badge_html = (f'<span class="badge badge-green">▲ {r["upside_pct"]:.1f}%</span>')
