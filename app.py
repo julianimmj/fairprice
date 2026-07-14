@@ -311,6 +311,83 @@ span[data-baseweb="tag"] button:hover {
     color: #FF1744 !important;
     background-color: transparent !important;
 }
+
+/* ── Columns Layout ── */
+.rank-info-col {
+    width: 55%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+}
+.rank-prices-col {
+    width: 25%;
+    text-align: right;
+    padding-right: 24px;
+}
+.rank-badge-col {
+    width: 20%;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ── Mobile Responsive Rules ── */
+@media (max-width: 768px) {
+    .fp-title {
+        font-size: 2rem !important;
+    }
+    .fp-subtitle {
+        font-size: 0.9rem !important;
+    }
+    .hero-card {
+        padding: 20px !important;
+    }
+    .hero-card .price-fair {
+        font-size: 2rem !important;
+    }
+    .metric-row {
+        gap: 8px !important;
+    }
+    .metric-item {
+        padding: 8px 4px !important;
+        min-width: 75px !important;
+    }
+    .metric-label {
+        font-size: 0.6rem !important;
+    }
+    .metric-value {
+        font-size: 0.95rem !important;
+    }
+
+    /* Rank Cards on Mobile */
+    .rank-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 16px !important;
+        gap: 12px !important;
+    }
+    .rank-info-col, .rank-prices-col, .rank-badge-col {
+        width: 100% !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        padding-right: 0 !important;
+    }
+    .rank-prices-col {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        padding-top: 8px !important;
+    }
+    .rank-badge-col {
+        margin-top: 4px !important;
+    }
+    /* Hide table header on mobile */
+    .rank-header-row {
+        display: none !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -650,10 +727,10 @@ with tab2:
 
                 # Table Header
                 st.markdown("""
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px 6px 20px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
-                    <div style="width: 55%; font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Ativo / Setor / Modelo / Indicadores</div>
-                    <div style="width: 25%; text-align: right; font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px; padding-right: 24px;">Preço Justo (Atual)</div>
-                    <div style="width: 20%; text-align: right; font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Upside / Desconto</div>
+                <div class="rank-header-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px 6px 20px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div class="rank-info-col" style="font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Ativo / Setor / Modelo / Indicadores</div>
+                    <div class="rank-prices-col" style="font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Preço Justo (Atual)</div>
+                    <div class="rank-badge-col" style="font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px;">Upside / Desconto</div>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -664,19 +741,19 @@ with tab2:
                     cov_desc = f" · Cob.Juros: {cov_val:.1f}x" if cov_val < 990 else ""
 
                     st.markdown(f"""
-                    <div class="rank-card" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <div style="width: 55%; display: flex; align-items: center; justify-content: flex-start; text-align: left;">
+                    <div class="rank-card">
+                        <div class="rank-info-col">
                             <span class="rank-number" style="min-width: 48px; display: inline-block;">#{i+1}</span>
                             <div>
                                 <div class="rank-ticker">{r['ticker']}</div>
                                 <div class="rank-sector">{r['sector']} · {r['model_icon']} {r['model_used']}{alav_desc}{cov_desc}</div>
                             </div>
                         </div>
-                        <div class="rank-prices" style="width: 25%; text-align: right; padding-right: 24px;">
+                        <div class="rank-prices-col">
                             <div class="rank-fair-val">R$ {r['fair_value']:.2f}</div>
                             <div class="rank-curr-val">Atual: R$ {r['current_price']:.2f}</div>
                         </div>
-                        <div style="width: 20%; text-align: right; display: flex; justify-content: flex-end;">
+                        <div class="rank-badge-col">
                             {badge_html}
                         </div>
                     </div>
